@@ -5,13 +5,15 @@ import com.example.data.alarm.mappers.toAlarm
 import com.example.data.alarm.mappers.toEntity
 import com.example.domain.alarm.model.Alarm
 import com.example.domain.alarm.repository.AlarmRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class AlarmRepositoryImpl(
     private val alarmDao: AlarmDao
 ) : AlarmRepository {
 
-    override suspend fun insertAlarm(alarm: Alarm): Long {
-        return alarmDao.insert(alarm.toEntity())
+    override suspend fun insertAlarm(alarm: Alarm) {
+        alarmDao.insert(alarm.toEntity())
     }
 
     override suspend fun updateAlarm(alarm: Alarm) {
@@ -22,11 +24,14 @@ class AlarmRepositoryImpl(
         alarmDao.delete(alarm.toEntity())
     }
 
-    override suspend fun getAllAlarms(): List<Alarm> {
+    override suspend fun getAllAlarms(): Flow<List<Alarm>> {
         return alarmDao.getAllAlarms()
-            .map {
-                it.toAlarm()
-            }
+            .map {list ->
+                list.map {entity ->
+                    entity.toAlarm()
+                }
+        }
+
     }
 
     override suspend fun getAlarmById(id: Long): Alarm? {

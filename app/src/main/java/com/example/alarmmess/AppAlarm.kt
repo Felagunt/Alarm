@@ -1,6 +1,7 @@
 package com.example.alarmmess
 
 import android.app.Application
+import android.content.Context
 import com.example.alarm_list.di.alarmListPresentationModule
 import com.example.alarmmess.di.audioFileProviderModule
 import com.example.alarmmess.di.databaseModule
@@ -13,8 +14,11 @@ import org.koin.core.context.startKoin
 class AppAlarm: Application() {
     override fun onCreate() {
         super.onCreate()
+        startKoinApp(this)
+    }
+    fun startKoinApp(context: Context){
         startKoin {
-            androidContext(this@AppAlarm)
+            androidContext(context)
             modules(
                 listOf(
                     databaseModule,
