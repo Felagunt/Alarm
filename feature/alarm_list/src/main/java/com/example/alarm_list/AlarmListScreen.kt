@@ -26,7 +26,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun AlarmListScreenRoot(
     viewModel: AlarmListViewModel = koinViewModel(),
-    onAlarmClick: (Long) -> Unit
+    onAlarmClick: (Long) -> Unit,
+    onCreateAlarmClick: () -> Unit
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -36,6 +37,7 @@ fun AlarmListScreenRoot(
         processIntent = { intent ->
             when(intent) {
                 is AlarmListIntent.OnAlarmClick -> onAlarmClick(intent.alarmId)
+                is AlarmListIntent.CreateAlarm -> onCreateAlarmClick()
                 else -> Unit
             }
             viewModel.processIntent(intent)

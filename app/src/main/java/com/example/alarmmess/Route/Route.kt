@@ -11,5 +11,8 @@ sealed interface AlarmNavGraph {
     data object AlarmListScreen: AlarmNavGraph
 
     @Serializable
+    data object AlarmCreateScreen: AlarmNavGraph
+
+    @Serializable
     data class AlarmEditScreen(val alarmId: Long): AlarmNavGraph
 }

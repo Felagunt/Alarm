@@ -44,7 +44,19 @@ fun AlarmNavGraph(modifier: Modifier = Modifier, navController: NavHostControlle
                     viewModel = viewModel,
                     onAlarmClick = { alarmId ->
                         navController.navigate(AlarmNavGraph.AlarmEditScreen(alarmId = alarmId))
+                    },
+                    onCreateAlarmClick = {
+                        navController.navigate(AlarmNavGraph.AlarmCreateScreen)
                     }
+                )
+            }
+
+            composable<AlarmNavGraph.AlarmCreateScreen> {
+                val viewModel = koinViewModel<AlarmEditViewModel>()
+                AlarmEditScreenRoot(
+                    viewModel = viewModel,
+                    onBackClick = { navController.navigateUp() },
+                    alarmId = null
                 )
             }
 
