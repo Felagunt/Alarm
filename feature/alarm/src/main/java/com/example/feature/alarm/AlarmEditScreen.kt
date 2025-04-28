@@ -42,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.core.ui.components.ErrorScreen
 import com.example.core.ui.components.LoadingScreen
 import com.example.core.ui.components.TimePicker
 import com.example.core.ui.components.VibrationToggle
@@ -59,15 +60,14 @@ fun AlarmEditScreenRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(alarmId) {
-        if(alarmId != null) {
-            viewModel.processIntent(AlarmEditIntent.LoadAlarm(alarmId))
-        } else {
-            viewModel.processIntent(AlarmEditIntent.NewAlarm)
+        when (alarmId) {
+            null -> viewModel.processIntent(AlarmEditIntent.NewAlarm)
+            else -> viewModel.processIntent(AlarmEditIntent.LoadAlarm(alarmId))
         }
-//        alarmId?.let {
-//            viewModel.processIntent(AlarmEditIntent.LoadAlarm(it))
-//        }
     }
+
+    val title = if (alarmId == null) "Create Alarm" else "Edit Alarm"
+
     AlarmEditScreen(
         state = state,
         processIntent = { intent ->
@@ -79,7 +79,8 @@ fun AlarmEditScreenRoot(
                 else -> Unit
             }
             viewModel.processIntent(intent)
-        }
+        },
+        title = title
     )
 
 
@@ -89,11 +90,13 @@ fun AlarmEditScreenRoot(
 @Composable
 private fun AlarmEditScreen(
     state: AlarmEditState,
-    processIntent: (AlarmEditIntent) -> Unit
+    processIntent: (AlarmEditIntent) -> Unit,
+    title: String,
 ) {
 
 
     val context = LocalContext.current
+
     val audioPickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
             uri?.let {
@@ -104,7 +107,7 @@ private fun AlarmEditScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Set Alarm") },
+                title = { Text(title) },
                 navigationIcon = {
                     IconButton(onClick = { processIntent(AlarmEditIntent.OnNavigationBack) }) {
                         Icon(
@@ -116,7 +119,9 @@ private fun AlarmEditScreen(
             )
         }
     ) { paddingValues ->
-        if (state.isLoading) {
+        if(state.error != null) {
+            ErrorScreen(modifier = Modifier.padding(paddingValues), error = state.error)
+        } else if (state.isLoading) {
             LoadingScreen(modifier = Modifier.padding(paddingValues))
         } else {
             Column(
@@ -205,7 +210,10 @@ private fun AlarmEditScreen(
 
                 // Save Button
                 Button(
-                    onClick = { processIntent(AlarmEditIntent.SaveAlarm) }
+                    onClick = {
+                        processIntent(AlarmEditIntent.SaveAlarm)
+                        processIntent(AlarmEditIntent.OnNavigationBack)
+                    }
                 ) {
                     Text("Save Alarm")
                 }
@@ -220,6 +228,7 @@ private fun AlarmEditScreen(
 fun PreviewAlarmEditScreen() {
     AlarmEditScreen(
         state = AlarmEditState(),
-        processIntent = {}
+        processIntent = {},
+        title = TODO()
     )
 }
