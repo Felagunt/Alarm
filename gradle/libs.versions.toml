@@ -16,7 +16,7 @@ ktor = "3.0.0"
 coil3 = "3.0.0-rc02"
 ksp = "2.0.21-1.0.27"
 sqlite = "2.5.0-alpha11"
-room = "2.7.0-alpha07"
+room = "2.7.1"
 retrofitVersion = "2.9.0"
 loggingInterceptor = "4.11.0"
 hilt = "2.52"
@@ -32,8 +32,15 @@ androidx-core-testing = "2.1.0"
 mockito = "4.0.0"
 mockkVersion = "1.13.8"
 uiGraphicsAndroid = "1.8.0"
+monitor = "1.7.2"
+junitKtx = "1.2.1"
+runner = "1.6.1"
+junitJunit = "4.12"
 
 [libraries]
+
+gson = { group = "com.google.code.gson", name = "gson", version = "2.10.1" }
+
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -53,9 +60,13 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 mockk = {module = "io.mockk:mockk", version.ref = "mockkVersion" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
 androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "androidx-core-testing" }
 hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
+androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.7.0" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.7.0" }
 
 
 datastore = { module = "androidx.datastore:datastore-preferences", version.ref="datastoreVersion" }
@@ -112,6 +123,10 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroid" }
+androidx-monitor = { group = "androidx.test", name = "monitor", version.ref = "monitor" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

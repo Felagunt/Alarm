@@ -93,10 +93,6 @@ private fun AlarmEditScreen(
     processIntent: (AlarmEditIntent) -> Unit,
     title: String,
 ) {
-
-
-    val context = LocalContext.current
-
     val audioPickerLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
             uri?.let {
@@ -119,7 +115,7 @@ private fun AlarmEditScreen(
             )
         }
     ) { paddingValues ->
-        if(state.error != null) {
+        if (state.error != null) {
             ErrorScreen(modifier = Modifier.padding(paddingValues), error = state.error)
         } else if (state.isLoading) {
             LoadingScreen(modifier = Modifier.padding(paddingValues))

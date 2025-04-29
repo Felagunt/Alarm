@@ -72,4 +72,14 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     //implementation(libs.kotlinx.serialization.json)
     implementation(libs.sqlite.bundled)
+
+    testImplementation(libs.androidx.room.testing)  // For Room database testing
+    testImplementation(libs.kotlinx.coroutines.test)  // For testing coroutines
+    testImplementation(libs.androidx.core.testing)  // For mocking Android components
+    testImplementation(libs.mockito.core)  //
+    testImplementation(libs.mockito.kotlin)  //
+    testImplementation(libs.mockito.inline)  //
+    testImplementation(libs.mockk)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.engine)
 }

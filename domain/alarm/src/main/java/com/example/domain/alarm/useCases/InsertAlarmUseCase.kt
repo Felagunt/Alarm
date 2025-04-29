@@ -7,9 +7,10 @@ import com.example.domain.alarm.repository.AlarmRepository
 class InsertAlarmUseCase(
     private val repository: AlarmRepository
 ) {
-    suspend operator fun invoke(alarm: Alarm) {
-        Log.d("InsertAlarmUseCase", "Inserting alarm: $alarm")
-        val result = repository.insertAlarm(alarm)
-        Log.d("InsertAlarmUseCase", "Alarm inserted with ID: $result")
+    suspend operator fun invoke(alarm: Alarm): Long
+    {
+        //Log.d("InsertAlarmUseCase", "Inserting alarm: $alarm")
+        return repository.insertAlarm(alarm)
+        //Log.d("InsertAlarmUseCase", "Alarm inserted with ID: $result")
     }
 }

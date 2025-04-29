@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -24,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.core.ui.components.AnimatedSwitch
 import com.example.core.ui.components.ErrorScreen
 import com.example.core.ui.components.LoadingScreen
 import org.koin.androidx.compose.koinViewModel
@@ -40,7 +44,7 @@ fun AlarmListScreenRoot(
     AlarmListScreen(
         state = state,
         processIntent = { intent ->
-            when(intent) {
+            when (intent) {
                 is AlarmListIntent.OnAlarmClick -> onAlarmClick(intent.alarmId)
                 is AlarmListIntent.CreateAlarm -> onCreateAlarmClick()
                 else -> Unit
@@ -61,9 +65,14 @@ private fun AlarmListScreen(
             state.isLoading -> {
                 LoadingScreen(modifier = Modifier.padding(paddingValues)) // Show loading screen
             }
+
             state.error != null -> {
-                ErrorScreen(error = state.error, modifier = Modifier.padding(paddingValues)) // Show error screen
+                ErrorScreen(
+                    error = state.error,
+                    modifier = Modifier.padding(paddingValues)
+                ) // Show error screen
             }
+
             state.alarms.isEmpty() -> {
                 // If there are no alarms, show a message and the "Create" button
                 Column(
@@ -80,6 +89,7 @@ private fun AlarmListScreen(
                     }
                 }
             }
+
             else -> {
                 // If alarms are available, show the list and the "Create" button at the bottom
                 Column(modifier = Modifier.fillMaxSize()) {
@@ -90,7 +100,12 @@ private fun AlarmListScreen(
                         items(state.alarms) { alarm ->
                             AlarmItem(
                                 onEnabledClick = { alarmId, isEnabled ->
-                                    processIntent(AlarmListIntent.OnEnabledClick(alarmId, isEnabled))
+                                    processIntent(
+                                        AlarmListIntent.OnEnabledClick(
+                                            alarmId,
+                                            isEnabled
+                                        )
+                                    )
                                 },
                                 hour = alarm.hour,
                                 minute = alarm.minute,
@@ -118,7 +133,6 @@ private fun AlarmListScreen(
 }
 
 
-
 @Composable
 fun AlarmItem(
     hour: Int,
@@ -128,21 +142,28 @@ fun AlarmItem(
     onEnabledClick: (Long, Boolean) -> Unit,
     modifier: Modifier
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+    Card(
+        modifier = modifier
+            .padding(12.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Text(
-            text = "Alarm at ${hour}:${minute}",
-            style = MaterialTheme.typography.bodySmall
-        )
-
-        Switch(
-            checked = isEnabled,
-            onCheckedChange = { isChecked ->
-                onEnabledClick(alarmId, isChecked) // Вызов функции для изменения состояния
-            }
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Alarm at ${hour}:${minute}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            AnimatedSwitch(
+                checked = isEnabled,
+                onCheckedChange = { isChecked ->
+                    onEnabledClick(alarmId, isChecked)
+                }
+            )
+        }
     }
 }

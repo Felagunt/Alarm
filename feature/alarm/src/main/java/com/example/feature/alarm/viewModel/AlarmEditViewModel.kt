@@ -28,7 +28,7 @@ class AlarmEditViewModel(
     val state: StateFlow<AlarmEditState> = _state
 
     fun processIntent(intent: AlarmEditIntent) {
-        Log.d("AlarmEditViewModel", "Processing intent: $intent")
+        //Log.d("AlarmEditViewModel", "Processing intent: $intent")
         when (intent) {
             is AlarmEditIntent.LoadAlarm -> loadAlarm(intent.id)
             is AlarmEditIntent.SetTime -> updateTime(intent.hour, intent.minute)
@@ -37,58 +37,48 @@ class AlarmEditViewModel(
             is AlarmEditIntent.ToggleVibration -> toggleVibration(intent.isVibration)
             is AlarmEditIntent.SetAudioFile -> setAudioFile(intent.audioPath)
             is AlarmEditIntent.SaveAlarm -> saveAlarm()
-            is AlarmEditIntent.OnNavigationBack -> Log.d("AlarmEditViewModel", "Handling navigation back")
+            is AlarmEditIntent.OnNavigationBack ->{}// Log.d("AlarmEditViewModel", "Handling navigation back")
             is AlarmEditIntent.NewAlarm -> createNewAlarm()
         }
     }
 
     private fun createNewAlarm() {
-        Log.d("AlarmEditViewModel", "Creating a new alarm")
-        viewModelScope.launch {
-            _state.update {
-                AlarmEditState()
-            }
-            Log.d("AlarmEditViewModel", "New alarm state initialized: ${_state.value}")
-
-            // Если вам нужно создать новый объект будильника:
-            val newAlarm = Alarm(
-                id = -1L, // новый объект с id по умолчанию
-                hour = 6,
-                minute = 0,
-                isEnabled = true,
-                repeatDays = emptyList(),
-                isRepeating = false,
-                label = "Wake Up",
-                timestamp = System.currentTimeMillis(),
-                isVibrationEnabled = false,
-                audioPath = ""
+        _state.update {
+            AlarmEditState(
+                alarm = Alarm(
+                    id = 0L, // New alarm with default ID
+                    hour = 0,
+                    minute = 0,
+                    isEnabled = true,
+                    repeatDays = emptyList(),
+                    isRepeating = false,
+                    label = "Wake Up",
+                    timestamp = System.currentTimeMillis(),
+                    isVibrationEnabled = false,
+                    audioPath = ""
+                )
             )
-            _state.update { it.copy(alarm = newAlarm) }
-            Log.d("AlarmEditViewModel", "New alarm created: $newAlarm")
         }
     }
 
 
     private fun setAudioFile(uri: Uri) {
-        Log.d("AlarmEditViewModel", "Setting audio file: $uri")
+        //Log.d("AlarmEditViewModel", "Setting audio file: $uri")
         viewModelScope.launch {
             val audioFileName = selectAudioFileUseCase.execute(uri)
             _state.value = _state.value.copy(selectedAudioPath = audioFileName)
-            Log.d("AlarmEditViewModel", "Audio file set: $audioFileName")
+            //Log.d("AlarmEditViewModel", "Audio file set: $audioFileName")
         }
     }
 
     private fun loadAlarm(id: Long) {
-        Log.d("AlarmEditViewModel", "Loading alarm with ID: $id")
         viewModelScope.launch {
             _state.value = AlarmEditState(isLoading = true)
             when (val result = getAlarmByIdUseCase(id)) {
                 is Result.Error -> {
-                    Log.e("AlarmEditViewModel", "Error loading alarm: ${result.exception}")
                     _state.update { it.copy(error = result.exception.localizedMessage) }
                 }
                 is Result.Success -> {
-                    Log.d("AlarmEditViewModel", "Alarm loaded successfully: ${result.data}")
                     _state.update { it.copy(alarm = result.data) }
                 }
             }
@@ -96,26 +86,26 @@ class AlarmEditViewModel(
     }
 
     private fun updateTime(hour: Int, minute: Int) {
-        Log.d("AlarmEditViewModel", "Updating time to Hour: $hour, Minute: $minute")
+        //Log.d("AlarmEditViewModel", "Updating time to Hour: $hour, Minute: $minute")
         _state.value = _state.value.copy(selectedHour = hour, selectedMinute = minute)
     }
 
     private fun toggleVibration(isEnabled: Boolean) {
-        Log.d("AlarmEditViewModel", "Toggling vibration to: $isEnabled")
+        //Log.d("AlarmEditViewModel", "Toggling vibration to: $isEnabled")
         _state.value = _state.value.copy(isVibrationEnabled = isEnabled)
     }
 
     private fun toggleDay(day: String) {
-        Log.d("AlarmEditViewModel", "Toggling day: $day")
+        //Log.d("AlarmEditViewModel", "Toggling day: $day")
         val newSelectedDays = _state.value.selectedDays.toMutableSet().apply {
             if (contains(day)) remove(day) else add(day)
         }
         _state.value = _state.value.copy(selectedDays = newSelectedDays)
-        Log.d("AlarmEditViewModel", "Updated selected days: ${_state.value.selectedDays}")
+        //Log.d("AlarmEditViewModel", "Updated selected days: ${_state.value.selectedDays}")
     }
 
     private fun toggleDaily(isDaily: Boolean) {
-        Log.d("AlarmEditViewModel", "Toggling daily to: $isDaily")
+        //Log.d("AlarmEditViewModel", "Toggling daily to: $isDaily")
         if (isDaily) {
             _state.value = _state.value.copy(
                 selectedDays = setOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
@@ -124,44 +114,53 @@ class AlarmEditViewModel(
             _state.value = _state.value.copy(selectedDays = emptySet())
         }
         _state.value = _state.value.copy(isDailyChecked = isDaily)
-        Log.d("AlarmEditViewModel", "Daily toggle updated. Selected days: ${_state.value.selectedDays}")
+        //Log.d("AlarmEditViewModel", "Daily toggle updated. Selected days: ${_state.value.selectedDays}")
     }
 
     private fun saveAlarm() {
-        Log.d("AlarmEditViewModel", "Saving alarm")
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
-            val dayMapping = mapOf(
-                "Mon" to 1,
-                "Tue" to 2,
-                "Wed" to 3,
-                "Thu" to 4,
-                "Fri" to 5,
-                "Sat" to 6,
-                "Sun" to 7
-            )
-            val repeatDaysAsIntegers = _state.value.selectedDays.mapNotNull { dayMapping[it] }
-            val alarm = Alarm(
-                hour = _state.value.selectedHour,
-                minute = _state.value.selectedMinute,
-                isEnabled = true,
-                repeatDays = repeatDaysAsIntegers,
-                isRepeating = repeatDaysAsIntegers.isNotEmpty(),
-                label = "Wake Up",
-                timestamp = System.currentTimeMillis(),
-                isVibrationEnabled = _state.value.isVibrationEnabled,
-                audioPath = _state.value.selectedAudioPath ?: ""
-            )
-            Log.d("AlarmEditViewModel", "Alarm to save: $alarm")
-            if (alarm.id == -1L) {
+
+            // Construct the alarm from the current state
+            val alarm = createAlarmFromState()
+
+            // Save or update alarm
+            if (alarm.id == 0L) {
+                // Insert a new alarm
                 insertAlarmUseCase(alarm)
-                Log.d("AlarmEditViewModel", "Alarm inserted successfully")
             } else {
+                // Update the existing alarm
                 updateAlarmUseCase(alarm)
-                Log.d("AlarmEditViewModel", "Alarm updated successfully")
             }
-            _state.value = AlarmEditState(isLoading = false, alarm = alarm)
-            Log.d("AlarmEditViewModel", "Alarm save completed. Current state: ${_state.value}")
+
+            _state.value = _state.value.copy(isLoading = false, alarm = alarm)
         }
+    }
+
+    private fun createAlarmFromState(): Alarm {
+        val dayMapping = mapOf(
+            "Mon" to 1,
+            "Tue" to 2,
+            "Wed" to 3,
+            "Thu" to 4,
+            "Fri" to 5,
+            "Sat" to 6,
+            "Sun" to 7
+        )
+
+        val repeatDaysAsIntegers = _state.value.selectedDays.mapNotNull { dayMapping[it] }
+
+        return Alarm(
+            id = _state.value.alarm?.id ?: 0L,  // Use current alarm ID or default to -1
+            hour = _state.value.selectedHour,
+            minute = _state.value.selectedMinute,
+            isEnabled = true,
+            repeatDays = repeatDaysAsIntegers,
+            isRepeating = repeatDaysAsIntegers.isNotEmpty(),
+            label = _state.value.alarm?.label ?: "Wake Up",
+            timestamp = System.currentTimeMillis(),
+            isVibrationEnabled = _state.value.isVibrationEnabled,
+            audioPath = _state.value.selectedAudioPath ?: ""
+        )
     }
 }

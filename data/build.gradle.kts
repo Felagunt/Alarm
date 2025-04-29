@@ -33,6 +33,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":data:alarm"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

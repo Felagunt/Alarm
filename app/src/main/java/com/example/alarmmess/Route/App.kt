@@ -8,7 +8,7 @@ import androidx.navigation.compose.rememberNavController
 fun App(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     AlarmNavGraph(
-        modifier = Modifier,
+        modifier = modifier,
         navController = navController
     )
 }

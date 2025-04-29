@@ -11,11 +11,11 @@ class GetAllAlarmsUseCase(private val repository: AlarmRepository) {
     operator fun invoke(): Flow<Result<List<Alarm>>> = flow {
         try {
             repository.getAllAlarms().collect { list -> // Вы подписываетесь на поток здесь
-                Log.d("GetAllAlarmsUseCase", "Emitting alarms: $list")
+                //Log.d("GetAllAlarmsUseCase", "Emitting alarms: $list")
                 emit(Result.Success(list))
             }
         } catch (e: Exception) {
-            Log.e("GetAllAlarmsUseCase", "Error fetching alarms: ${e.localizedMessage}")
+            //Log.e("GetAllAlarmsUseCase", "Error fetching alarms: ${e.localizedMessage}")
             emit(Result.Error(e))
         }
     }

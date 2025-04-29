@@ -1,5 +1,6 @@
 package com.example.data.alarm.repository
 
+import android.util.Log
 import com.example.data.alarm.dao.AlarmDao
 import com.example.data.alarm.mappers.toAlarm
 import com.example.data.alarm.mappers.toEntity
@@ -12,11 +13,13 @@ class AlarmRepositoryImpl(
     private val alarmDao: AlarmDao
 ) : AlarmRepository {
 
-    override suspend fun insertAlarm(alarm: Alarm) {
-        alarmDao.insert(alarm.toEntity())
+    override suspend fun insertAlarm(alarm: Alarm): Long {
+        //Log.d("Repository", "Alarm inserted successfully")
+        return alarmDao.insert(alarm.toEntity())
     }
 
     override suspend fun updateAlarm(alarm: Alarm) {
+        //Log.d("Repository", "Alarm updated successfully")
         alarmDao.update(alarm.toEntity())
     }
 
@@ -25,6 +28,7 @@ class AlarmRepositoryImpl(
     }
 
     override suspend fun getAllAlarms(): Flow<List<Alarm>> {
+        //Log.d("Repository", "Alarms fetched successfully")
         return alarmDao.getAllAlarms()
             .map {list ->
                 list.map {entity ->
