@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class AlarmEditViewModel(
     private val insertAlarmUseCase: InsertAlarmUseCase,
@@ -43,31 +44,39 @@ class AlarmEditViewModel(
     }
 
     private fun createNewAlarm() {
+        val now = Calendar.getInstance()
+        val currentHour = now.get(Calendar.HOUR_OF_DAY)
+        val currentMinute = now.get(Calendar.MINUTE)
+
         _state.update {
             AlarmEditState(
                 alarm = Alarm(
-                    id = 0L, // New alarm with default ID
-                    hour = 0,
-                    minute = 0,
+                    id = 0L,
+                    hour = currentHour,
+                    minute = currentMinute,
                     isEnabled = true,
-                    repeatDays = emptyList(),
+                    repeatDays = emptyList(), // по умолчанию не повторяется
                     isRepeating = false,
                     label = "Wake Up",
                     timestamp = System.currentTimeMillis(),
                     isVibrationEnabled = false,
                     audioPath = ""
-                )
+                ),
+                selectedHour = currentHour,
+                selectedMinute = currentMinute
             )
         }
     }
 
 
     private fun setAudioFile(uri: Uri) {
-        //Log.d("AlarmEditViewModel", "Setting audio file: $uri")
         viewModelScope.launch {
-            val audioFileName = selectAudioFileUseCase.execute(uri)
-            _state.value = _state.value.copy(selectedAudioPath = audioFileName)
-            //Log.d("AlarmEditViewModel", "Audio file set: $audioFileName")
+            try {
+                val audioFileName = selectAudioFileUseCase.execute(uri)
+                _state.value = _state.value.copy(selectedAudioPath = audioFileName)
+            } catch (e: Exception) {
+                _state.value = _state.value.copy(error = "Audio file not found.")
+            }
         }
     }
 
@@ -76,10 +85,34 @@ class AlarmEditViewModel(
             _state.value = AlarmEditState(isLoading = true)
             when (val result = getAlarmByIdUseCase(id)) {
                 is Result.Error -> {
-                    _state.update { it.copy(error = result.exception.localizedMessage) }
+                    _state.update { it.copy(
+                        error = result.exception.localizedMessage,
+                        isLoading = false,
+                        alarm = null
+                    ) }
                 }
                 is Result.Success -> {
-                    _state.update { it.copy(alarm = result.data) }
+                    _state.update { it.copy(
+                        alarm = result.data,
+                        selectedHour = result.data!!.hour,
+                        selectedMinute = result.data!!.minute,
+                        selectedDays = result.data!!.repeatDays.mapNotNull {
+                            when (it) {
+                                1 -> "Mon"
+                                2 -> "Tue"
+                                3 -> "Wed"
+                                4 -> "Thu"
+                                5 -> "Fri"
+                                6 -> "Sat"
+                                7 -> "Sun"
+                                else -> null
+                            }
+                        }.toSet(),
+                        isDailyChecked = result.data!!.repeatDays.size == 7,
+                        isVibrationEnabled = result.data!!.isVibrationEnabled,
+                        selectedAudioPath = result.data!!.audioPath,
+                        isLoading = false
+                    ) }
                 }
             }
         }

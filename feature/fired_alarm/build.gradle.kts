@@ -1,12 +1,10 @@
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
 }
 
 android {
-    namespace = "com.example.feature.alarm"
+    namespace = "com.example.fired_alarm"
     compileSdk = 35
 
     defaultConfig {
@@ -32,17 +30,14 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-//    testOptions {
-//        unitTests.all {
-//            useJUnitPlatform() // Убедитесь, что используете платформу JUnit для тестов
-//        }
-//    }
 }
 
 dependencies {
+
     implementation(project(":domain:alarm"))
     implementation(project(":core:ui"))
     implementation(project(":core:common"))
+    implementation(project(":service:alarm"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -79,6 +74,7 @@ dependencies {
     //implementation(libs.kotlinx.serialization.json)
     implementation(libs.sqlite.bundled)
 
+
     testImplementation(libs.androidx.room.testing)  // For Room database testing
     testImplementation(libs.kotlinx.coroutines.test)  // For testing coroutines
     testImplementation(libs.androidx.core.testing)  // For mocking Android components
@@ -86,7 +82,4 @@ dependencies {
     testImplementation(libs.mockito.kotlin)  //
     testImplementation(libs.mockito.inline)  //
     testImplementation(libs.mockk)
-//    testImplementation(libs.junit.jupiter.api)
-//    testImplementation(libs.junit.jupiter.engine)
-//    testImplementation(libs.junit5)
 }

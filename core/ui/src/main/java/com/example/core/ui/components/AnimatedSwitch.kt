@@ -15,7 +15,8 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun AnimatedSwitch(
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val scale by animateFloatAsState(
         if (checked)

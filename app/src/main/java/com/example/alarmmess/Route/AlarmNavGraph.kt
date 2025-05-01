@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,6 +13,7 @@ import com.example.alarm_list.AlarmListScreenRoot
 import com.example.alarm_list.AlarmListViewModel
 import com.example.feature.alarm.AlarmEditScreenRoot
 import com.example.feature.alarm.viewModel.AlarmEditViewModel
+import com.example.fired_alarm.AlarmFiredScreen
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -69,6 +69,14 @@ fun AlarmNavGraph(modifier: Modifier = Modifier, navController: NavHostControlle
                         navController.navigateUp()
                     },
                     alarmId = args.alarmId
+                )
+            }
+
+            composable<AlarmNavGraph.AlarmFiredScreen> {
+                val alarmId = it.toRoute<AlarmNavGraph.AlarmFiredScreen>().alarmId
+                //val alarmId = it.arguments?.getLong("alarmId") ?: return@composable
+                AlarmFiredScreen(
+                    alarmId = alarmId
                 )
             }
         }

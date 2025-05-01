@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":feature:alarm"))
     implementation(project(":feature:alarm_list"))
+    implementation(project(":feature:fired_alarm"))
     implementation(project(":service:alarm"))
 
     implementation(libs.androidx.core.ktx)

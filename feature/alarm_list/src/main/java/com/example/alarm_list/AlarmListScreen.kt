@@ -3,7 +3,6 @@ package com.example.alarm_list
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,10 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.core.ui.components.AnimatedSwitch
 import com.example.core.ui.components.ErrorScreen
 import com.example.core.ui.components.LoadingScreen
 import org.koin.androidx.compose.koinViewModel
@@ -52,7 +50,6 @@ fun AlarmListScreenRoot(
             viewModel.processIntent(intent)
         }
     )
-
 }
 
 @Composable
@@ -93,8 +90,20 @@ private fun AlarmListScreen(
             else -> {
                 // If alarms are available, show the list and the "Create" button at the bottom
                 Column(modifier = Modifier.fillMaxSize()) {
+                    state.nextAlarmTimeDescription?.let { description ->
+                        Text(
+                            text = description,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            style = MaterialTheme.typography.titleMedium,
+                            textAlign = TextAlign.Center
+                        )
+                    }
                     LazyColumn(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         items(state.alarms) { alarm ->
@@ -150,17 +159,25 @@ fun AlarmItem(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "Alarm at ${hour}:${minute}",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
             )
-            AnimatedSwitch(
+//            AnimatedSwitch(
+//                checked = isEnabled,
+//                onCheckedChange = { isChecked ->
+//                    onEnabledClick(alarmId, isChecked)
+//                }
+//            )
+            Switch(
                 checked = isEnabled,
-                onCheckedChange = { isChecked ->
+                onCheckedChange = {isChecked ->
                     onEnabledClick(alarmId, isChecked)
                 }
             )

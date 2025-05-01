@@ -22,7 +22,7 @@ val databaseModule = module {
                         Log.d("RoomDatabase", "Database created")
                     }
                 })
-                //.fallbackToDestructiveMigration()
+                //.fallbackToDestructiveMigration(true)
                 .build()
         }
 

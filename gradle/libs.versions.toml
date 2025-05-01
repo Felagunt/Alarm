@@ -24,8 +24,8 @@ hiltCompiler = "1.2.0"
 androidxHilt = "1.2.0"
 appcompat = "1.7.0"
 material = "1.12.0"
-datastoreVersion= "1.0.0"
-datastoreProtoVersion= "1.1.4"
+datastoreVersion = "1.0.0"
+datastoreProtoVersion = "1.1.4"
 
 kotlinx-coroutines-test = "1.6.0"
 androidx-core-testing = "2.1.0"
@@ -36,6 +36,7 @@ monitor = "1.7.2"
 junitKtx = "1.2.1"
 runner = "1.6.1"
 junitJunit = "4.12"
+jUnit5 = "1.7.0"
 
 [libraries]
 
@@ -57,7 +58,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 #testing
-mockk = {module = "io.mockk:mockk", version.ref = "mockkVersion" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockkVersion" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockito" }
@@ -67,10 +68,10 @@ hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", vers
 androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version = "5.7.0" }
 junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version = "5.7.0" }
+junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5", version.ref = "jUnit5" }
 
-
-datastore = { module = "androidx.datastore:datastore-preferences", version.ref="datastoreVersion" }
-datastore-proto = { module = "androidx.datastore:datastore", version.ref="datastoreProtoVersion" }
+datastore = { module = "androidx.datastore:datastore-preferences", version.ref = "datastoreVersion" }
+datastore-proto = { module = "androidx.datastore:datastore", version.ref = "datastoreProtoVersion" }
 
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
