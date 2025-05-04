@@ -1,5 +1,10 @@
 package com.example.alarm_list
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +26,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -103,28 +109,35 @@ private fun AlarmListScreen(
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .weight(1f),
+                            .weight(1f)
+                            .animateContentSize(),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         items(state.alarms) { alarm ->
-                            AlarmItem(
-                                onEnabledClick = { alarmId, isEnabled ->
-                                    processIntent(
-                                        AlarmListIntent.OnEnabledClick(
-                                            alarmId,
-                                            isEnabled
+                            AnimatedVisibility(
+                                visible = true,  // Always visible, but animating fade
+                                enter = fadeIn(tween(500)),
+                                exit = fadeOut(tween(500))
+                            ) {
+                                AlarmItem(
+                                    onEnabledClick = { alarmId, isEnabled ->
+                                        processIntent(
+                                            AlarmListIntent.OnEnabledClick(
+                                                alarmId,
+                                                isEnabled
+                                            )
                                         )
-                                    )
-                                },
-                                hour = alarm.hour,
-                                minute = alarm.minute,
-                                isEnabled = alarm.isEnabled,
-                                alarmId = alarm.id,
-                                modifier = Modifier
-                                    .clickable {
-                                        processIntent(AlarmListIntent.OnAlarmClick(alarm.id))
-                                    }
-                            )
+                                    },
+                                    hour = alarm.hour,
+                                    minute = alarm.minute,
+                                    isEnabled = alarm.isEnabled,
+                                    alarmId = alarm.id,
+                                    modifier = Modifier
+                                        .clickable {
+                                            processIntent(AlarmListIntent.OnAlarmClick(alarm.id))
+                                        }
+                                )
+                            }
                         }
                     }
                     Button(
@@ -151,10 +164,13 @@ fun AlarmItem(
     onEnabledClick: (Long, Boolean) -> Unit,
     modifier: Modifier
 ) {
+    val animatedIsEnabled by rememberUpdatedState(isEnabled)
+
     Card(
         modifier = modifier
             .padding(12.dp)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .animateContentSize(),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -169,14 +185,8 @@ fun AlarmItem(
                 text = "Alarm at ${hour}:${minute}",
                 style = MaterialTheme.typography.bodyMedium,
             )
-//            AnimatedSwitch(
-//                checked = isEnabled,
-//                onCheckedChange = { isChecked ->
-//                    onEnabledClick(alarmId, isChecked)
-//                }
-//            )
             Switch(
-                checked = isEnabled,
+                checked = animatedIsEnabled,
                 onCheckedChange = {isChecked ->
                     onEnabledClick(alarmId, isChecked)
                 }

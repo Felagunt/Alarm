@@ -21,6 +21,7 @@
             <option value="$PROJECT_DIR$/feature" />
             <option value="$PROJECT_DIR$/feature/alarm" />
             <option value="$PROJECT_DIR$/feature/alarm_list" />
+            <option value="$PROJECT_DIR$/feature/fired_alarm" />
             <option value="$PROJECT_DIR$/service" />
             <option value="$PROJECT_DIR$/service/alarm" />
           </set>

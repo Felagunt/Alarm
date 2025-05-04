@@ -1,5 +1,6 @@
 package com.example.alarm_list
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.comon.utils.Result
@@ -57,11 +58,16 @@ class AlarmListViewModel(
                     else alarm
                 }
 
+                val sortedAlarms = sortAlarms(updatedAlarms)
+
                 // Обновляем состояние
-                _state.value = _state.value.copy(alarms = updatedAlarms)
+                _state.value = _state.value.copy(alarms = sortedAlarms)
+
+
+                startNextAlarmCountdownUpdater()
 
                 // Получаем обновленный аларм
-                val alarmUpdated = updatedAlarms.first { it.id == alarmId }
+                val alarmUpdated = sortedAlarms.first { it.id == alarmId }
 
                 // Обновляем данные в репозитории через use case
                 when (val result = updateAlarmUseCase.invoke(alarmUpdated)) {
@@ -134,6 +140,12 @@ class AlarmListViewModel(
         }
     }
 
+    private fun sortAlarms(alarms: List<Alarm>): List<Alarm> {
+        return alarms.sortedWith(compareByDescending<Alarm> { it.isEnabled }
+            .thenBy { it.hour }
+            .thenBy { it.minute })
+
+    }
 
     private fun loadAllAlarms() {
         viewModelScope.launch {
@@ -152,10 +164,11 @@ class AlarmListViewModel(
                             }
 
                             is Result.Success -> {
+                                val sortedAlarms = sortAlarms(result.data)
                                 _state.update {
                                     it.copy(
                                         isLoading = false,
-                                        alarms = result.data,
+                                        alarms = sortedAlarms,
                                         error = null
                                     )
                                 }
