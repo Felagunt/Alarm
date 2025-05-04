@@ -33,11 +33,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.core.comon.utils.formatTime
 import com.example.core.ui.components.ErrorScreen
 import com.example.core.ui.components.LoadingScreen
 import org.koin.androidx.compose.koinViewModel
@@ -91,10 +93,16 @@ private fun AlarmListScreen(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("No alarms available.")
+                    Text(
+                        stringResource(R.string.no_alarms_available),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                     Spacer(modifier = Modifier.height(16.dp))
                     Button(onClick = { processIntent(AlarmListIntent.CreateAlarm) }) {
-                        Text("Create New Alarm")
+                        Text(
+                            text = stringResource(R.string.create_new_alarm),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 }
             }
@@ -155,7 +163,10 @@ private fun AlarmListScreen(
                             .padding(16.dp),
                         onClick = { processIntent(AlarmListIntent.CreateAlarm) }
                     ) {
-                        Text("Create New Alarm")
+                        Text(
+                            text = stringResource(R.string.create_new_alarm),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
                     }
                 }
             }
@@ -192,7 +203,7 @@ fun AlarmItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Alarm at ${hour}:${minute}",
+                text = stringResource(R.string.alarm_at).plus(" ${formatTime(hour, minute)}"),
                 style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             )
             Spacer(modifier = Modifier.weight(1f))
@@ -216,7 +227,7 @@ fun AlarmItem(
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Alarm"
+                    contentDescription = stringResource(R.string.delete_alarm)
                 )
             }
         }

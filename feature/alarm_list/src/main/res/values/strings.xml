@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="create_new_alarm">Create new alarm</string>
+    <string name="alarm_at">"Alarm at "</string>
+    <string name="delete_alarm">Delete Alarm</string>
+    <string name="no_alarms_available">No alarms available.</string>
 </resources>
