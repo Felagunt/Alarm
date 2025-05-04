@@ -17,9 +17,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -29,6 +33,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -128,6 +134,9 @@ private fun AlarmListScreen(
                                             )
                                         )
                                     },
+                                    onDeleteClick = {
+                                        processIntent(AlarmListIntent.OnDeleteClick(alarm))
+                                    },
                                     hour = alarm.hour,
                                     minute = alarm.minute,
                                     isEnabled = alarm.isEnabled,
@@ -162,6 +171,7 @@ fun AlarmItem(
     isEnabled: Boolean,
     alarmId: Long,
     onEnabledClick: (Long, Boolean) -> Unit,
+    onDeleteClick: () -> Unit,
     modifier: Modifier
 ) {
     val animatedIsEnabled by rememberUpdatedState(isEnabled)
@@ -183,14 +193,32 @@ fun AlarmItem(
         ) {
             Text(
                 text = "Alarm at ${hour}:${minute}",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
             )
-            Switch(
-                checked = animatedIsEnabled,
-                onCheckedChange = {isChecked ->
-                    onEnabledClick(alarmId, isChecked)
-                }
-            )
+            Spacer(modifier = Modifier.weight(1f))
+            AnimatedVisibility(
+                visible = true,
+                enter = fadeIn(tween(300)),
+                exit = fadeOut(tween(300))
+            ) {
+                Switch(
+                    checked = animatedIsEnabled,
+                    onCheckedChange = { isChecked ->
+                        onEnabledClick(alarmId, isChecked)
+                    }
+                )
+            }
+            IconButton(
+                onClick = {
+                    onDeleteClick.invoke()
+                },
+                modifier = Modifier.padding(start = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete Alarm"
+                )
+            }
         }
     }
 }

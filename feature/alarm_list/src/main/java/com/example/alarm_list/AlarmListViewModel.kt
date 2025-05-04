@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.core.comon.utils.Result
 import com.example.domain.alarm.model.Alarm
+import com.example.domain.alarm.useCases.DeleteAlarmUseCase
 import com.example.domain.alarm.useCases.GetAllAlarmsUseCase
 import com.example.domain.alarm.useCases.UpdateAlarmUseCase
 import kotlinx.coroutines.delay
@@ -20,7 +21,8 @@ import java.util.Calendar
 
 class AlarmListViewModel(
     private val getAllAlarmsUseCase: GetAllAlarmsUseCase,
-    private val updateAlarmUseCase: UpdateAlarmUseCase
+    private val updateAlarmUseCase: UpdateAlarmUseCase,
+    private val deleteAlarmUseCase: DeleteAlarmUseCase
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(AlarmListState())
@@ -46,6 +48,14 @@ class AlarmListViewModel(
             is AlarmListIntent.OnEnabledClick -> setAlarmEnabled(intent.alarmId, intent.isEnabled)
             is AlarmListIntent.CreateAlarm -> { /* Создание нового аларма */
             }
+
+            is AlarmListIntent.OnDeleteClick -> alarmDelete(intent.alarm)
+        }
+    }
+
+    private fun alarmDelete(alarm: Alarm) {
+        viewModelScope.launch {
+            deleteAlarmUseCase.invoke(alarm)
         }
     }
 

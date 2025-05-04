@@ -8,7 +8,8 @@ val alarmListPresentationModule = module {
     viewModel {
         AlarmListViewModel(
             getAllAlarmsUseCase = get(),
-            updateAlarmUseCase = get()
+            updateAlarmUseCase = get(),
+            deleteAlarmUseCase = get()
         )
     } //
 }

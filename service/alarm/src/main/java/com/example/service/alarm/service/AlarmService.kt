@@ -19,10 +19,17 @@ import android.os.VibratorManager
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.service.alarm.R
+import com.example.service.alarm.notification.AlarmNotificationFactory
+import com.example.service.alarm.player.AlarmPlayer
+import com.example.service.alarm.vibration.VibrationHandler
 import java.io.IOException
 
 
-class AlarmService : Service() {
+class AlarmService(
+    private val alarmPlayer: AlarmPlayer,
+    private val vibrationHandler: VibrationHandler,
+    private val notificationFactory: AlarmNotificationFactory
+) : Service() {
 
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -31,18 +38,18 @@ class AlarmService : Service() {
         val audioPath = intent?.getStringExtra("ALARM_AUDIO_PATH") ?: ""
         val repeatDays = intent?.getIntegerArrayListExtra("ALARM_REPEAT_DAYS") ?: ArrayList()
 
-        val notification = createNotification(alarmId)
-        startForeground(1, notification)
+
+        startForeground(1, notificationFactory.create(alarmId))
 
         if (isVibrationEnabled) {
-            triggerVibration(this)
+            vibrationHandler.vibrate()
         }
 
         if (audioPath.isNotEmpty()) {
-            playAudio(audioPath)
+            alarmPlayer.play(audioPath)
         } else {
             // Воспроизвести стандартный звук
-            playDefaultAudio()
+            alarmPlayer.playDefault()
         }
 
         stopSelf()

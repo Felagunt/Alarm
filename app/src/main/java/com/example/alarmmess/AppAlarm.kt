@@ -8,6 +8,7 @@ import com.example.alarmmess.di.databaseModule
 import com.example.data.alarm.di.alarmDataModule
 import com.example.domain.alarm.di.alarmDomainModule
 import com.example.feature.alarm.di.alarmPresentationModule
+import com.example.service.alarm.di.alarmServiceModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -26,7 +27,8 @@ class AppAlarm: Application() {
                     alarmDomainModule,
                     alarmPresentationModule,
                     alarmListPresentationModule,
-                    audioFileProviderModule
+                    audioFileProviderModule,
+                    alarmServiceModule
                 )
             )
         }
